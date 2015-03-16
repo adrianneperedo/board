@@ -74,6 +74,17 @@ class Comment extends AppModel
     }
   }
 
+  public static function deleteAllComments($thread_id)
+  {
+    try {
+      $db = DB::conn();
+      $db->begin();
+      $db->query('DELETE FROM comment where thread_id = ?', array($thread_id));
+    } catch (Exception $e) {
+      $db-rollback();
+    }
+  }
+
   public function deleteLikedComment()
   {
     try {

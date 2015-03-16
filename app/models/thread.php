@@ -45,7 +45,7 @@ class Thread extends AppModel
     {
         $threads = array();
         $db = DB::conn();
-        $rows = $db->rows("SELECT * FROM thread LIMIT {$offset}, {$limit}");
+        $rows = $db->rows("SELECT * FROM thread  ORDER BY created DESC LIMIT {$offset}, {$limit}");
         
         foreach ($rows as $row) {
             $threads[] = new self($row);
@@ -88,10 +88,12 @@ class Thread extends AppModel
             $db->query('DELETE FROM thread WHERE id = ? AND user_id = ?', $params);
             $this->deleteFollowedThread();
             $db->commit();
+            Comment::deleteAllComments($this->id);
         } catch (Exception $e) {
             $db->rollback();
         }
     }
+
 
     public function deleteFollowedThread()
     {
